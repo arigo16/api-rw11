@@ -96,11 +96,48 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('houses', [RtController::class, 'houses']);
         Route::get('houses/{id}', [RtController::class, 'house']);
         Route::get('houses/{id}/bills', [RtController::class, 'houseBills']);
+        Route::post('houses', [RtController::class, 'storeHouse']);
+        Route::put('houses/{id}', [RtController::class, 'updateHouse']);
+        Route::delete('houses/{id}', [RtController::class, 'destroyHouse']);
 
-        // Bills
+        // House Members
+        Route::get('houses/{houseId}/members', [RtController::class, 'houseMembers']);
+        Route::post('houses/{houseId}/members', [RtController::class, 'storeHouseMember']);
+        Route::post('houses/{houseId}/members/copy-from', [RtController::class, 'copyToMember']);
+        Route::get('houses/{houseId}/members/{memberId}', [RtController::class, 'houseMember']);
+        Route::post('houses/{houseId}/members/{memberId}', [RtController::class, 'updateHouseMember']);
+        Route::delete('houses/{houseId}/members/{memberId}', [RtController::class, 'destroyHouseMember']);
+
+        // House Owner
+        Route::get('houses/{houseId}/owner', [RtController::class, 'houseOwner']);
+        Route::post('houses/{houseId}/owner', [RtController::class, 'storeHouseOwner']);
+        Route::delete('houses/{houseId}/owner', [RtController::class, 'destroyHouseOwner']);
+
+        // House Occupant
+        Route::get('houses/{houseId}/occupant', [RtController::class, 'houseOccupant']);
+        Route::post('houses/{houseId}/occupant', [RtController::class, 'storeHouseOccupant']);
+        Route::delete('houses/{houseId}/occupant', [RtController::class, 'destroyHouseOccupant']);
+
+        // Bills IPL
         Route::get('bills/ipl', [RtController::class, 'billsIpl']);
+        Route::post('bills/ipl', [RtController::class, 'storeBillIpl']);
+        Route::put('bills/ipl/{id}', [RtController::class, 'updateBillIpl']);
+        Route::delete('bills/ipl/{id}', [RtController::class, 'destroyBillIpl']);
+
+        // Bills Cash
         Route::get('bills/cash', [RtController::class, 'billsCash']);
+        Route::post('bills/cash', [RtController::class, 'storeBillCash']);
+        Route::put('bills/cash/{id}', [RtController::class, 'updateBillCash']);
+        Route::delete('bills/cash/{id}', [RtController::class, 'destroyBillCash']);
+
+        // Bills PKK
         Route::get('bills/pkk', [RtController::class, 'billsPkk']);
+        Route::post('bills/pkk', [RtController::class, 'storeBillPkk']);
+        Route::put('bills/pkk/{id}', [RtController::class, 'updateBillPkk']);
+        Route::delete('bills/pkk/{id}', [RtController::class, 'destroyBillPkk']);
+
+        // Bulk Update Bills by House
+        Route::put('houses/{id}/bills/bulk', [RtController::class, 'bulkUpdateBills']);
 
         // Transactions & Balance
         Route::get('transactions', [RtController::class, 'transactions']);

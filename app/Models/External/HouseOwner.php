@@ -23,4 +23,22 @@ class HouseOwner extends BaseExternalModel
     {
         return $this->belongsTo(House::class, 'house_id');
     }
+
+    // ==================== CONSTANTS ====================
+
+    public const SUM_FAMILY = [
+        'TK',
+        'K0',
+        'K1',
+        'K2',
+        'K3',
+        'K4',
+        'K5',
+        'TK0',
+        'TK1',
+        'TK2',
+        'TK3',
+        'TK4',
+        'TK5',
+    ];
 }

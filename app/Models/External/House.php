@@ -19,6 +19,7 @@ class House extends BaseExternalModel
         'cash_amount',
         'pay_pkk',
         'pkk_amount',
+        'created_by',
         'updated_by',
     ];
 
@@ -109,6 +110,11 @@ class House extends BaseExternalModel
     public function voteAnswers()
     {
         return $this->hasMany(VoteAnswer::class, 'house_id');
+    }
+
+    public function members()
+    {
+        return $this->hasMany(HouseMember::class, 'house_id');
     }
 
     // ==================== ACCESSORS ====================
