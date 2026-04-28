@@ -11,6 +11,7 @@ use App\Http\Controllers\ExternalDbController;
 use App\Http\Controllers\RtController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\ContributorController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -54,6 +55,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::get('/user', [AuthController::class, 'user']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // Users CRUD
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::post('/', [UserController::class, 'store']);
+        Route::get('/{id}', [UserController::class, 'show']);
+        Route::put('/{id}', [UserController::class, 'update']);
+        Route::delete('/{id}', [UserController::class, 'destroy']);
+    });
 
     // Pengurus CRUD
     Route::apiResource('pengurus', PengurusController::class);
