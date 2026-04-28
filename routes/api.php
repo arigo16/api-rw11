@@ -23,7 +23,7 @@ Route::prefix('public')->group(function () {
     Route::get('/pengurus', [PengurusController::class, 'index']);
     Route::get('/pengurus/by-bidang', [PengurusController::class, 'byBidang']);
 
-    // RW Info
+    // RW Infos
     Route::get('/rw-info', [RwInfoController::class, 'index']);
     Route::get('/rw-info/{key}', [RwInfoController::class, 'show']);
 
