@@ -19,6 +19,9 @@ jobs:
           script: |
             cd /var/www/api-rw11
 
+            echo "Configuring git safe directory..."
+            git config --global --add safe.directory /var/www/api-rw11
+
             echo "Pulling latest code..."
             git pull origin master
 
