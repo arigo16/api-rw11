@@ -9,6 +9,8 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\DokumenController;
 use App\Http\Controllers\ExternalDbController;
 use App\Http\Controllers\RtController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ContributorController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -35,6 +37,16 @@ Route::prefix('public')->group(function () {
 
     // Dokumen (public only)
     Route::get('/dokumen', [DokumenController::class, 'publicDocs']);
+
+    // Transactions (public read-only)
+    Route::prefix('transactions')->group(function () {
+        Route::get('/', [TransactionController::class, 'publicIndex']);
+        Route::get('/summary', [TransactionController::class, 'summary']);
+        Route::get('/balance', [TransactionController::class, 'publicBalance']);
+    });
+
+    // Transaction Types (public read-only)
+    Route::get('/transaction-types', [TransactionController::class, 'types']);
 });
 
 // Protected routes (auth required)
@@ -74,6 +86,45 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dokumen CRUD
     Route::apiResource('dokumen', DokumenController::class);
     Route::post('dokumen/{dokumen}/toggle-public', [DokumenController::class, 'togglePublic']);
+
+    // Transactions (RW Level)
+    Route::prefix('transactions')->group(function () {
+        Route::get('/', [TransactionController::class, 'index']);
+        Route::get('/summary', [TransactionController::class, 'summary']);
+        Route::get('/balance', [TransactionController::class, 'balance']);
+        Route::post('/', [TransactionController::class, 'store']);
+        Route::get('/{id}', [TransactionController::class, 'show']);
+        Route::post('/{id}', [TransactionController::class, 'update']);
+        Route::delete('/{id}', [TransactionController::class, 'destroy']);
+    });
+
+    // Transaction Types
+    Route::prefix('transaction-types')->group(function () {
+        Route::get('/', [TransactionController::class, 'types']);
+        Route::post('/', [TransactionController::class, 'storeType']);
+        Route::put('/{id}', [TransactionController::class, 'updateType']);
+        Route::delete('/{id}', [TransactionController::class, 'destroyType']);
+    });
+
+    // Contributors (Iuran Rutin)
+    Route::prefix('contributors')->group(function () {
+        Route::get('/', [ContributorController::class, 'index']);
+        Route::post('/', [ContributorController::class, 'store']);
+        Route::get('/{id}', [ContributorController::class, 'show']);
+        Route::put('/{id}', [ContributorController::class, 'update']);
+        Route::delete('/{id}', [ContributorController::class, 'destroy']);
+    });
+
+    // Contributor Bills (Tagihan Iuran)
+    Route::prefix('contributor-bills')->group(function () {
+        Route::get('/', [ContributorController::class, 'bills']);
+        Route::get('/summary', [ContributorController::class, 'billsSummary']);
+        Route::post('/generate', [ContributorController::class, 'generateBills']);
+        Route::get('/{id}', [ContributorController::class, 'showBill']);
+        Route::post('/{id}/pay', [ContributorController::class, 'payBill']);
+        Route::post('/{id}/unpay', [ContributorController::class, 'unpayBill']);
+        Route::delete('/{id}', [ContributorController::class, 'destroyBill']);
+    });
 
     // External Database - Dynamic table access (Query Builder)
     Route::prefix('external')->group(function () {
