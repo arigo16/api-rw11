@@ -39,6 +39,10 @@ Route::prefix('public')->group(function () {
     // Dokumen (public only)
     Route::get('/dokumen', [DokumenController::class, 'publicDocs']);
 
+    // Assets (public read-only)
+    Route::get('/assets', [AssetController::class, 'index']);
+    Route::get('/assets/{asset}', [AssetController::class, 'show']);
+
     // Transactions (public read-only)
     Route::prefix('transactions')->group(function () {
         Route::get('/', [TransactionController::class, 'publicIndex']);
