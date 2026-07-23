@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Contributor extends Model
@@ -12,6 +13,7 @@ class Contributor extends Model
         'name',
         'type',
         'amount',
+        'transaction_type_id',
         'is_active',
         'start_month',
         'start_year',
@@ -20,6 +22,7 @@ class Contributor extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'transaction_type_id' => 'integer',
         'is_active' => 'boolean',
         'start_month' => 'integer',
         'start_year' => 'integer',
@@ -32,6 +35,11 @@ class Contributor extends Model
     public function bills(): HasMany
     {
         return $this->hasMany(ContributorBill::class);
+    }
+
+    public function transactionType(): BelongsTo
+    {
+        return $this->belongsTo(TransactionType::class);
     }
 
     // ==================== SCOPES ====================

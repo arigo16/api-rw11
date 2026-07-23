@@ -23,6 +23,11 @@ class TransactionType extends Model
         return $this->hasMany(Transaction::class, 'type_id');
     }
 
+    public function contributors(): HasMany
+    {
+        return $this->hasMany(Contributor::class);
+    }
+
     // ==================== SCOPES ====================
 
     public function scopeActive($query)

@@ -22,7 +22,7 @@ class ContributorController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Contributor::query();
+        $query = Contributor::with('transactionType');
 
         // Filter by type
         if ($request->has('type')) {
@@ -60,7 +60,7 @@ class ContributorController extends Controller
      */
     public function show(int $id)
     {
-        $contributor = Contributor::with(['bills' => function ($q) {
+        $contributor = Contributor::with(['transactionType', 'bills' => function ($q) {
             $q->orderBy('year_bill', 'desc')->orderBy('month_bill', 'desc');
         }])->find($id);
 
@@ -81,11 +81,15 @@ class ContributorController extends Controller
             'name' => 'required|string|max:100',
             'type' => 'required|in:RT,RUKO,LAINNYA',
             'amount' => 'required|numeric|min:0',
+            'transaction_type_id' => 'nullable|integer|exists:transaction_types,id',
             'is_active' => 'boolean',
             'start_month' => 'nullable|integer|min:1|max:12',
             'start_year' => 'nullable|integer|min:2020|max:2100',
             'notes' => 'nullable|string|max:500',
         ]);
+
+        // Default transaction_type_id to 1 (Iuran Warga) if not provided
+        $validated['transaction_type_id'] = $validated['transaction_type_id'] ?? 1;
 
         $contributor = Contributor::create($validated);
 
@@ -108,6 +112,7 @@ class ContributorController extends Controller
             'name' => 'sometimes|string|max:100',
             'type' => 'sometimes|in:RT,RUKO,LAINNYA',
             'amount' => 'sometimes|numeric|min:0',
+            'transaction_type_id' => 'nullable|integer|exists:transaction_types,id',
             'is_active' => 'boolean',
             'start_month' => 'nullable|integer|min:1|max:12',
             'start_year' => 'nullable|integer|min:2020|max:2100',
@@ -319,11 +324,12 @@ class ContributorController extends Controller
                 $attachmentPath = $file->storeAs('transactions', $filename, 'public');
             }
 
-            // Create transaction
+            // Create transaction with dynamic type from contributor
+            $transactionTypeId = $bill->contributor->transaction_type_id ?? 1;
             $transaction = Transaction::create([
                 'id_settlement' => $idSettlement,
                 'mutation' => 'IN',
-                'type_id' => 1, // Iuran Warga
+                'type_id' => $transactionTypeId,
                 'amount' => $amount,
                 'balance_before' => $balanceBefore,
                 'balance_after' => $balanceAfter,
