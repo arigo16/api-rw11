@@ -71,13 +71,16 @@ class Transaction extends Model
     /**
      * Generate unique settlement ID
      * Format: TRX-YYYYMM-XXXX
+     * Uses lockForUpdate to prevent race conditions
      */
     public static function generateSettlementId(): string
     {
         $prefix = 'TRX-' . date('Ym') . '-';
 
-        $lastTransaction = self::where('id_settlement', 'like', $prefix . '%')
-            ->orderBy('id_settlement', 'desc')
+        $lastTransaction = self::withTrashed()
+            ->where('id_settlement', 'like', $prefix . '%')
+            ->orderByRaw('CAST(SUBSTRING(id_settlement, -4) AS UNSIGNED) DESC')
+            ->lockForUpdate()
             ->first();
 
         if ($lastTransaction) {
